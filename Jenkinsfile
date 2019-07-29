@@ -41,29 +41,25 @@ node {
 
 def imagePrune(containerName){
     try {
-        sh "spawn sudo -S docker image prune -f"
-        sh "expect [sudo] password for jenkins:"
-        sh "send "chander""
-        sh "sudo -S docker stop $containerName"
-        sh "expect [sudo] password for jenkins:"
-        sh "send "chander""
-    } catch(error){}
+        sh "docker image prune -f"
+        sh "docker stop $containerName"
+        } catch(error){}
 }
 
 def imageBuild(containerName, tag){
-    sh "sudo -S docker build -t $containerName:$tag  -t $containerName --pull --no-cache ."
+    sh "docker build -t $containerName:$tag  -t $containerName --pull --no-cache ."
     echo "Image build complete"
 }
 
 def pushToImage(containerName, tag, dockerUser, dockerPassword){
-    sh "sudo -S docker login -u $dockerUser -p $dockerPassword"
-    sh "sudo -S docker tag $containerName:$tag $dockerUser/$containerName:$tag"
-    sh "sudo -S docker push $dockerUser/$containerName:$tag"
+    sh "docker login -u $dockerUser -p $dockerPassword"
+    sh "docker tag $containerName:$tag $dockerUser/$containerName:$tag"
+    sh "docker push $dockerUser/$containerName:$tag"
     echo "Image push complete"
 }
 
 def runApp(containerName, tag, dockerHubUser, httpPort){
-    sh "sudo -S docker pull $dockerHubUser/$containerName"
-    sh "sudo -S docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+    sh "docker pull $dockerHubUser/$containerName"
+    sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
     echo "Application started on port: ${httpPort} (http)"
 }
