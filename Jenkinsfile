@@ -41,9 +41,12 @@ node {
 
 def imagePrune(containerName){
     try {
-        sh "sudo -S docker image prune -f"
-        chander
+        sh "spawn sudo -S docker image prune -f"
+        sh "expect "[sudo] password for jenkins:""
+        sh "send "chander""
         sh "sudo -S docker stop $containerName"
+        sh "expect "[sudo] password for jenkins:""
+        sh "send "chander""
     } catch(error){}
 }
 
